@@ -6,28 +6,28 @@ import time
 port = "com9"  
 ser = serial.Serial(port, 9600, timeout=1)
 time.sleep(1)
-# 創建任務
+# Create a task
 with nidaqmx.Task() as task:
-    # 添加模擬輸入通道（使用正確的設備和通道名稱）
+    # Add an analog input channel (replace with the correct device and channel name)
     task.ai_channels.add_ai_voltage_chan("cDAQ1Mod1/ai0")
 
-    # 設置樣本時鐘速率和連續采集模式
+    # Set the sample clock rate and configure for continuous acquisition mode
     task.timing.cfg_samp_clk_timing(rate=1000, sample_mode=AcquisitionType.CONTINUOUS, samps_per_chan=1000)
 
-    # 開始任務
+    # Start the task
     task.start()
 
-    # 讀取數據
+    # Read data
     print("Reading voltage values... Press Ctrl+C to stop.")
     try:
         robot_status = 1
         while True:
             if robot_status == 1:
                 data = task.read(number_of_samples_per_channel=1)
-                # 提取列表中的單個數值並進行格式化
+                # Extract a single value from the list and format it
                 voltage = data[0]
                 print(f"Voltage: {voltage:.2f} V")
-                # 停止任務條件
+                # Stop the task and send a signal to Arduino if voltage exceeds 2.1
                 if voltage > 2.1:
                     print("Voltage exceeded 2.1, stopping task, sending signal to Arduino.")
                     ser.write("ON".encode('utf-8'))
