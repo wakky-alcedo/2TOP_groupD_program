@@ -1,7 +1,7 @@
 import time
 import serial
 
-Arduino = serial.Serial("COM8", 9600)  # Create a serial object 'Arduino' to manage the serial port communication
+Arduino = serial.Serial("COM4", 9600)  # Create a serial object 'Arduino' to manage the serial port communication
 time.sleep(3)
 
 print("-----Connect Success-----")
