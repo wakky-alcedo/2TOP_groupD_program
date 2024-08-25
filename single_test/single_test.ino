@@ -24,10 +24,10 @@ void loop() {
     // Pomp
     digitalWrite(ledPin, HIGH);
     
-    analogWrite(ENA, 110);        // Set the motor speed using PWM with a value of 110
+    analogWrite(ENA, 128);        // Set the motor speed using PWM with a value of 110 　　127が最小 実際は128以上
     digitalWrite(IN1, HIGH);      // Set the motor direction to forward
     digitalWrite(IN2, LOW);       // Ensure the motor direction is correct
-    delay(3000);                  // Run the motor for 3 seconds
+    delay(4000);                  // Run the motor for 3 seconds
 
     analogWrite(ENA, 0);          // Stop the motor by setting the speed to 0
     digitalWrite(IN1, HIGH);      // Prepare to change the motor direction
