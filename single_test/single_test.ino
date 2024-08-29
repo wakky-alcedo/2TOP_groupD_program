@@ -20,14 +20,18 @@ void setup() {
 
 void loop() {
   if (!Run) {                     // If the variable 'Run' is False (0), execute the following code block
+
+    digitalWrite(relayPin, HIGH); // Open the relay
+    delay(500);                  // Wait for 3 seconds
+    digitalWrite(relayPin, LOW);  // Close the relay
     
     // Pomp
     digitalWrite(ledPin, HIGH);
     
-    analogWrite(ENA, 128);        // Set the motor speed using PWM with a value of 110 　　127が最小 実際は128以上
+    analogWrite(ENA, 200);        // Set the motor speed using PWM with a value of 110 　　127が最小 実際は128以上
     digitalWrite(IN1, HIGH);      // Set the motor direction to forward
     digitalWrite(IN2, LOW);       // Ensure the motor direction is correct
-    delay(4000);                  // Run the motor for 3 seconds
+    delay(30000);                  // Run the motor for 3 seconds
 
     analogWrite(ENA, 0);          // Stop the motor by setting the speed to 0
     digitalWrite(IN1, HIGH);      // Prepare to change the motor direction
@@ -41,14 +45,13 @@ void loop() {
     digitalWrite(ledPin, HIGH);
 
     digitalWrite(relayPin, HIGH); // Open the relay
-    delay(3000);                  // Wait for 3 seconds
-
+    delay(1000);                  // Wait for 3 seconds
     digitalWrite(relayPin, LOW);  // Close the relay
 
     digitalWrite(ledPin, LOW);
 
     // delay
-    delay(5000);                  // Wait for 5 seconds
+    // delay(5000);                  // Wait for 5 seconds
 
     Run = 1;                      // Set the variable 'Run' to True (1)
   }
