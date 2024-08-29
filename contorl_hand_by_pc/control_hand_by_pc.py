@@ -15,19 +15,25 @@ time_valve_open = 0.0
 
 is_feedback:bool = False
 
-port = "com4"  
+port = "com4"   
 ser = serial.Serial(port, 9600, timeout=1)
 time.sleep(1)
 # Create a task
 with nidaqmx.Task() as task:
     # Add an analog input channel (replace with the correct device and channel name)
     task.ai_channels.add_ai_voltage_chan("cDAQ1Mod1/ai0")
+    # task.ai_channels.add_ai_voltage_chan("Dev1/ai0")
 
     # Set the sample clock rate and configure for continuous acquisition mode
     task.timing.cfg_samp_clk_timing(rate=1000, sample_mode=AcquisitionType.CONTINUOUS, samps_per_chan=1000)
 
+    # バッファサイズを増やす
+    # task.in_stream.input_buf_size = 10000
+
     # Start the task
     task.start()
+
+    max_voltage = 0
 
     # Read data
     print("Reading voltage values... Press Ctrl+C to stop.")
@@ -37,10 +43,18 @@ with nidaqmx.Task() as task:
             if robot_status == 1:
                 
                 # 計測 get voltage
+                # データをより頻繁に読み取る
+                # data = task.read(number_of_samples_per_channel=10)
+                # 平均値を計算
+                # voltage = sum(data) / len(data)
                 data = task.read(number_of_samples_per_channel=1)
-                # Extract a single value from the list and format it
                 voltage = data[0]
-                print(f"Voltage: {voltage:.2f} V")
+
+                if(voltage > max_voltage):
+                    max_voltage = voltage
+                    print(f"Max Voltage: {max_voltage:.2f} V")
+
+                # print(f"Voltage: {voltage:.2f} V")
                 diff = target_value - voltage
                 
                 # 演算 control
@@ -64,14 +78,15 @@ with nidaqmx.Task() as task:
 
                 # 送信 send signal to Arduino
                 send_data = pomp_speed | int(is_valve_open)<<8
-                print(bin(send_data))
+                # print(bin(send_data))
                 ser.write(chr(send_data).encode('utf-8'))
 
                 # 受信 get feedback from Arduino
-                print(ser.readline().decode('utf-8'))
+                # print(ser.readline().decode('utf-8'))
             else:
                 robot_status = int(input("Type Robot Status (0/1): "))
     except KeyboardInterrupt:
+        print("Stopped by user")
         pass
     finally:
         ser.close()
